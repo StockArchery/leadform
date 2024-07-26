@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Form</title>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBZ_oDXISkEH4B6W7ucoYwP-QOJyB3tkBw",
+            authDomain: "lead-form2.firebaseapp.com",
+            databaseURL: "https://lead-form2-default-rtdb.firebaseio.com",
+            projectId: "lead-form2",
+            storageBucket: "lead-form2.appspot.com",
+            messagingSenderId: "974601262133",
+            appId: "1:974601262133:web:f494b05f4d4d41b3f10d7c"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Handle form submission
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('dataForm');
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                // Get form data
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const zip = document.getElementById('zip').value;
+
+                // Reference to your database
+                const submissionsRef = ref(database, 'submissions');
+
+                // Save data to Firebase
+                push(submissionsRef, {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    zip: zip
+                })
+                .then(() => {
+                    alert('Data saved successfully!');
+                    form.reset();
+                })
+                .catch((error) => {
+                    console.error('Error saving data: ', error);
+                    alert('Failed to save data.');
+                });
+            });
+        });
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column; /* Ensure vertical alignment */
+        }
+        h1 {
+            margin: 0;
+            padding-bottom: 20px;
+            color: #333;
+            text-align: center;
+            font-size: 2rem;
+        }
+        form {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            width: 100%;
+        }
+        input[type="submit"]:hover {
+            background: #218838;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fill in your details, and we'll contact you soon</h1>
+    <form id="dataForm">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+        <div class="form-group">
+            <label for="zip">Zip Code:</label>
+            <input type="number" id="zip" name="zip" required>
+        </div>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+
+
+
