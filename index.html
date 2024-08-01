@@ -25,13 +25,14 @@
         const database = getDatabase(app);
 
         // Function to save form data
-        async function saveFormData(name, email, phone, zip) {
+        async function saveFormData(name, email, phone, district, tradingExperience) {
             const submissionsRef = ref(database, 'submissions');
             const newSubmissionRef = push(submissionsRef, {
                 name: name,
                 email: email,
                 phone: phone,
-                zip: zip
+                district: district,
+                tradingExperience: tradingExperience
             });
 
             try {
@@ -83,10 +84,11 @@
                 const name = document.getElementById('name').value;
                 const email = document.getElementById('email').value;
                 const phone = document.getElementById('phone').value;
-                const zip = document.getElementById('zip').value;
+                const district = document.getElementById('district').value;
+                const tradingExperience = document.getElementById('tradingExperience').value;
 
                 // Save data to Firebase
-                saveFormData(name, email, phone, zip);
+                saveFormData(name, email, phone, district, tradingExperience);
 
                 // Reset form
                 form.reset();
@@ -94,17 +96,31 @@
         });
     </script>
     <style>
+        /* Full-screen video background */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1; /* Place video behind other content */
+        }
         body {
             font-family: Arial, sans-serif;
-            background-color: rgb(37, 37, 37); /* Dark background */
-            color: rgb(254, 187, 18); /* Bright text color */
-            margin: 0;
-            padding: 20px;
+            color: rgb(254, 187, 18);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            flex-direction: column; /* Ensure vertical alignment */
+            flex-direction: column;
         }
         h1 {
             margin: 0;
@@ -113,9 +129,9 @@
             font-size: 2rem;
         }
         form {
-            background: #fff;
+            background: rgba(255, 255, 255, 0.8); /* Transparent white background */
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             padding: 20px;
             max-width: 400px;
             width: 100%;
@@ -124,7 +140,7 @@
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
-            color: rgb(254, 187, 18); /* Label color */
+            color: rgb(254, 187, 18);
         }
         input[type="text"],
         input[type="email"],
@@ -133,10 +149,10 @@
             width: calc(100% - 22px);
             padding: 10px;
             margin-bottom: 10px;
-            border: 2px solid rgb(254, 187, 18); /* Input field border color */
+            border: 2px solid rgb(254, 187, 18);
             border-radius: 4px;
-            background-color: #fff; /* Input field background color */
-            color: rgb(37, 37, 37); /* Input field text color */
+            background-color: #fff;
+            color: rgb(37, 37, 37);
         }
         input[type="text"]:hover,
         input[type="email"]:hover,
@@ -146,12 +162,12 @@
         input[type="email"]:focus,
         input[type="tel"]:focus,
         input[type="number"]:focus {
-            border-color: rgb(255, 165, 0); /* Hover and focus border color */
+            border-color: rgb(255, 165, 0);
             outline: none;
         }
         input[type="submit"] {
-            background: rgb(254, 187, 18); /* Button background color */
-            color: rgb(37, 37, 37); /* Button text color */
+            background: rgb(254, 187, 18);
+            color: rgb(37, 37, 37);
             border: none;
             padding: 15px;
             font-size: 16px;
@@ -160,7 +176,7 @@
             width: 100%;
         }
         input[type="submit"]:hover {
-            background: rgb(255, 165, 0); /* Button hover background color */
+            background: rgb(255, 165, 0);
         }
         .form-group {
             margin-bottom: 15px;
@@ -168,23 +184,33 @@
     </style>
 </head>
 <body>
+    <!-- Full-screen background video -->
+    <video class="video-background" autoplay loop muted>
+        <source src="path/to/your/video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    
     <h1>Fill in your details, and we'll contact you soon</h1>
     <form id="dataForm">
         <div class="form-group">
             <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
+            <input type="text" id="name" name="name">
         </div>
         <div class="form-group">
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+            <input type="email" id="email" name="email">
         </div>
         <div class="form-group">
             <label for="phone">Phone Number:</label>
-            <input type="tel" id="phone" name="phone" required>
+            <input type="tel" id="phone" name="phone">
         </div>
         <div class="form-group">
-            <label for="zip">Zip Code:</label>
-            <input type="number" id="zip" name="zip" required>
+            <label for="district">District:</label>
+            <input type="text" id="district" name="district">
+        </div>
+        <div class="form-group">
+            <label for="tradingExperience">Trading Experience (in years):</label>
+            <input type="number" id="tradingExperience" name="tradingExperience">
         </div>
         <input type="submit" value="Submit">
     </form>
