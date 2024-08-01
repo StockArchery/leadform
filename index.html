@@ -25,13 +25,15 @@
         const database = getDatabase(app);
 
         // Function to save form data
-        function saveFormData(name, email, phone, zip) {
+        function saveFormData(name, email, phone, zip, tradingExperience, district) {
             const submissionsRef = ref(database, 'submissions');
             push(submissionsRef, {
                 name: name,
                 email: email,
                 phone: phone,
-                zip: zip
+                zip: zip,
+                tradingExperience: tradingExperience,
+                district: district
             })
             .then(() => {
                 alert('Data saved successfully!');
@@ -95,9 +97,11 @@
                 const email = document.getElementById('email').value;
                 const phone = document.getElementById('phone').value;
                 const zip = document.getElementById('zip').value;
+                const tradingExperience = document.getElementById('tradingExperience').value;
+                const district = document.getElementById('district').value;
 
                 // Save data to Firebase
-                saveFormData(name, email, phone, zip);
+                saveFormData(name, email, phone, zip, tradingExperience, district);
 
                 // Reset form
                 form.reset();
@@ -187,7 +191,16 @@
             <label for="zip">Zip Code:</label>
             <input type="number" id="zip" name="zip" required>
         </div>
+        <div class="form-group">
+            <label for="tradingExperience">Trading Experience (Years):</label>
+            <input type="number" id="tradingExperience" name="tradingExperience" required>
+        </div>
+        <div class="form-group">
+            <label for="district">District:</label>
+            <input type="text" id="district" name="district" required>
+        </div>
         <input type="submit" value="Submit">
     </form>
 </body>
 </html>
+
