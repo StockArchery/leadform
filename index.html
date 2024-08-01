@@ -7,7 +7,7 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-        import { getDatabase, ref, push, set, get } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+        import { getDatabase, ref, push, set, get, update } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
         // Your Firebase configuration
         const firebaseConfig = {
@@ -25,57 +25,52 @@
         const database = getDatabase(app);
 
         // Function to save form data
-        function saveFormData(name, email, phone, tradingExperience, district) {
+        async function saveFormData(name, email, phone, zip) {
             const submissionsRef = ref(database, 'submissions');
-            push(submissionsRef, {
+            const newSubmissionRef = push(submissionsRef, {
                 name: name,
                 email: email,
                 phone: phone,
-                tradingExperience: tradingExperience,
-                district: district
-            })
-            .then(() => {
+                zip: zip
+            });
+
+            try {
+                await newSubmissionRef;
                 alert('Data saved successfully!');
-            })
-            .catch((error) => {
+
+                // Update daily node with the new submission
+                await updateDailyNode();
+            } catch (error) {
                 console.error('Error saving data: ', error);
                 alert('Failed to save data.');
-            });
+            }
         }
 
-        // Function to save all submissions data to a new node named with the current date
-        async function saveDataDaily() {
+        // Function to update the daily node with the current submissions data
+        async function updateDailyNode() {
             try {
                 const today = new Date();
                 const dateString = today.toISOString().split('T')[0]; // YYYY-MM-DD format
                 const submissionsRef = ref(database, 'submissions');
+                const dailyRef = ref(database, 'daily/' + dateString);
 
                 // Get the current submissions data
-                const snapshot = await get(submissionsRef);
-                const data = snapshot.val();
+                const submissionsSnapshot = await get(submissionsRef);
+                const submissionsData = submissionsSnapshot.val();
 
-                if (data) {
-                    const dailyRef = ref(database, 'daily/' + dateString);
+                // Get the current daily data
+                const dailySnapshot = await get(dailyRef);
+                const dailyData = dailySnapshot.val() || {};
 
-                    // Set the daily node with submissions data
-                    await set(dailyRef, data);
-                    console.log('Daily data saved successfully!');
-                    
-                    // Clear the submissions node after transferring data
-                    await set(submissionsRef, null);
-                } else {
-                    console.log('No data available to save.');
-                }
+                // Merge new submissions with existing daily data
+                const updatedDailyData = { ...dailyData, ...submissionsData };
+
+                // Set the updated data to the daily node
+                await set(dailyRef, updatedDailyData);
+                console.log('Daily data updated successfully!');
             } catch (error) {
-                console.error('Error fetching or saving data: ', error);
+                console.error('Error updating daily data: ', error);
             }
-        }
-
-        // Set interval to run saveDataDaily function every 24 hours
-        function startDailyTimer() {
-            saveDataDaily(); // Initial call
-            const interval = 86400000; // 24 hours in milliseconds
-            setInterval(saveDataDaily, interval);
         }
 
         // Start the timer when the document is ready
@@ -88,18 +83,14 @@
                 const name = document.getElementById('name').value;
                 const email = document.getElementById('email').value;
                 const phone = document.getElementById('phone').value;
-                const tradingExperience = document.getElementById('tradingExperience').value;
-                const district = document.getElementById('district').value;
+                const zip = document.getElementById('zip').value;
 
                 // Save data to Firebase
-                saveFormData(name, email, phone, tradingExperience, district);
+                saveFormData(name, email, phone, zip);
 
                 // Reset form
                 form.reset();
             });
-
-            // Start the daily data saving timer
-            startDailyTimer();
         });
     </script>
     <style>
@@ -192,12 +183,8 @@
             <input type="tel" id="phone" name="phone" required>
         </div>
         <div class="form-group">
-            <label for="tradingExperience">Trading Experience (Years):</label>
-            <input type="number" id="tradingExperience" name="tradingExperience" required>
-        </div>
-        <div class="form-group">
-            <label for="district">District:</label>
-            <input type="text" id="district" name="district" required>
+            <label for="zip">Zip Code:</label>
+            <input type="number" id="zip" name="zip" required>
         </div>
         <input type="submit" value="Submit">
     </form>
