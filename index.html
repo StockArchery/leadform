@@ -25,13 +25,12 @@
         const database = getDatabase(app);
 
         // Function to save form data
-        function saveFormData(name, email, phone, zip, tradingExperience, district) {
+        function saveFormData(name, email, phone, tradingExperience, district) {
             const submissionsRef = ref(database, 'submissions');
             push(submissionsRef, {
                 name: name,
                 email: email,
                 phone: phone,
-                zip: zip,
                 tradingExperience: tradingExperience,
                 district: district
             })
@@ -72,13 +71,6 @@
             }
         }
 
-        // Function to calculate the time until the next 24-hour period
-        function getTimeUntilNextRun() {
-            const now = new Date();
-            const nextRun = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0); // Midnight of the next day
-            return nextRun.getTime() - now.getTime();
-        }
-
         // Set interval to run saveDataDaily function every 24 hours
         function startDailyTimer() {
             saveDataDaily(); // Initial call
@@ -96,12 +88,11 @@
                 const name = document.getElementById('name').value;
                 const email = document.getElementById('email').value;
                 const phone = document.getElementById('phone').value;
-                const zip = document.getElementById('zip').value;
                 const tradingExperience = document.getElementById('tradingExperience').value;
                 const district = document.getElementById('district').value;
 
                 // Save data to Firebase
-                saveFormData(name, email, phone, zip, tradingExperience, district);
+                saveFormData(name, email, phone, tradingExperience, district);
 
                 // Reset form
                 form.reset();
@@ -114,7 +105,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background-color: rgb(37, 37, 37); /* Dark background */
+            color: rgb(254, 187, 18); /* Bright text color */
             margin: 0;
             padding: 20px;
             display: flex;
@@ -126,7 +118,6 @@
         h1 {
             margin: 0;
             padding-bottom: 20px;
-            color: #333;
             text-align: center;
             font-size: 2rem;
         }
@@ -142,7 +133,7 @@
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
-            color: #555;
+            color: rgb(254, 187, 18); /* Label color */
         }
         input[type="text"],
         input[type="email"],
@@ -151,12 +142,25 @@
             width: calc(100% - 22px);
             padding: 10px;
             margin-bottom: 10px;
-            border: 1px solid #ddd;
+            border: 2px solid rgb(254, 187, 18); /* Input field border color */
             border-radius: 4px;
+            background-color: #fff; /* Input field background color */
+            color: rgb(37, 37, 37); /* Input field text color */
+        }
+        input[type="text"]:hover,
+        input[type="email"]:hover,
+        input[type="tel"]:hover,
+        input[type="number"]:hover,
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="number"]:focus {
+            border-color: rgb(255, 165, 0); /* Hover and focus border color */
+            outline: none;
         }
         input[type="submit"] {
-            background: #28a745;
-            color: white;
+            background: rgb(254, 187, 18); /* Button background color */
+            color: rgb(37, 37, 37); /* Button text color */
             border: none;
             padding: 15px;
             font-size: 16px;
@@ -165,7 +169,7 @@
             width: 100%;
         }
         input[type="submit"]:hover {
-            background: #218838;
+            background: rgb(255, 165, 0); /* Button hover background color */
         }
         .form-group {
             margin-bottom: 15px;
@@ -188,10 +192,6 @@
             <input type="tel" id="phone" name="phone" required>
         </div>
         <div class="form-group">
-            <label for="zip">Zip Code:</label>
-            <input type="number" id="zip" name="zip" required>
-        </div>
-        <div class="form-group">
             <label for="tradingExperience">Trading Experience (Years):</label>
             <input type="number" id="tradingExperience" name="tradingExperience" required>
         </div>
@@ -203,4 +203,3 @@
     </form>
 </body>
 </html>
-
